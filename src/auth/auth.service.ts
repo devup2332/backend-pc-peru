@@ -22,12 +22,12 @@ export class AuthService {
   ) {}
   async registerUser(registerUser: RegisterUserDTO): Promise<IResponse> {
     const passHashed = await hashPassword(registerUser.password);
-    const user = await this.prismaService.user.findFirst({
+    const user = await this.prismaService.users.findFirst({
       where: { email: registerUser.email },
     });
     if (user)
       throw new HttpException("El correo esta en uso", HttpStatus.BAD_REQUEST);
-    const newUser = await this.prismaService.user.create({
+    const newUser = await this.prismaService.users.create({
       data: {
         ...registerUser,
         password: passHashed,
@@ -49,9 +49,35 @@ export class AuthService {
   }
 
   async loginUser(loginUser: LoginUserDTO): Promise<IResponse> {
-    const user = await this.prismaService.user.findFirst({
+    const user = await this.prismaService.users.findFirst({
       where: { email: loginUser.email },
     });
+    // const { id: productId } = await this.prismaService.products.create({
+    //   data: {
+    //     name: "",
+    //   },
+    // });
+    // await this.prismaService.prices.create({
+    //   data: {
+    //     price: "2000",
+    //     productId,
+    //     store: "Amzon",
+    //   },
+    // });
+
+    const products = await this.prismaService.products.findMany({
+      include: {
+        prices: {
+          where: { price: { gt: "1999" } },
+          select: {
+            price: true,
+            store: true,
+          },
+        },
+        _count: true,
+      },
+    });
+    console.log({ products });
     if (!user)
       throw new HttpException("Usuario no encontrado", HttpStatus.NOT_FOUND);
 
@@ -69,6 +95,7 @@ export class AuthService {
       message: "Operation successfull",
       data: {
         token,
+        products,
       },
     };
   }

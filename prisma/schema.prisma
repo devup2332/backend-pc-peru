@@ -14,10 +14,30 @@ datasource db {
 }
 
 
-model User {
+model Users {
   id String @id @default(uuid())
   email String  @unique
   full_name  String?
   phone String 
   password String
+}
+
+model Products {
+  id String @id @default(uuid())
+  name String 
+  prices Prices[] 
+  description String?
+  image String?
+  stars Int?
+  currency String?
+  tags Json?
+  category String?
+}
+
+model Prices {
+  id String @id @default(uuid())
+  price String
+  store String
+  product Products @relation(fields: [productId], references: [id])
+  productId String
 }

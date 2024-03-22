@@ -9,6 +9,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "npm run format && env-cmd -f .env.development nest start --watch",
+    "start:local": "npm run format && env-cmd -f .env.local nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "prisma:init": "prisma init",
@@ -22,7 +23,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
     "check": "eslint \"{src,apps,libs,test}/**/*.ts\"",
-    "start:docker": "docker-compose --env-file .env.development up -d"
+    "db:docker": "docker-compose --env-file .env.local up -d"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.2",
